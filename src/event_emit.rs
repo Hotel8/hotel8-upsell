@@ -43,15 +43,26 @@ impl Publisher {
     /// From a verified caller (handler path).
     pub fn from_parts(subject: &str, scopes: &str) -> Self {
         Self {
-            subject: if subject.is_empty() { None } else { Some(subject.to_string()) },
-            scopes: if scopes.is_empty() { None } else { Some(scopes.to_string()) },
+            subject: if subject.is_empty() {
+                None
+            } else {
+                Some(subject.to_string())
+            },
+            scopes: if scopes.is_empty() {
+                None
+            } else {
+                Some(scopes.to_string())
+            },
         }
     }
 
     /// Background / system operations (no user context).
     #[allow(dead_code)]
     pub fn system() -> Self {
-        Self { subject: None, scopes: None }
+        Self {
+            subject: None,
+            scopes: None,
+        }
     }
 }
 
@@ -105,16 +116,15 @@ pub async fn emit_on_pool(
     payload: serde_json::Value,
     publisher: &Publisher,
 ) -> Result<uuid::Uuid, OutboxError> {
-    let mut conn = pool
-        .acquire()
-        .await
-        .map_err(OutboxError::Db)?;
-    sqlx::query("SELECT sentin8_set_tenant_context($1, NULL, NULL, NULL, false, false, false, NULL, $2)")
-        .bind(env_id)
-        .bind(STREAM_FAMILY)
-        .execute(&mut *conn)
-        .await
-        .map_err(OutboxError::Db)?;
+    let mut conn = pool.acquire().await.map_err(OutboxError::Db)?;
+    sqlx::query(
+        "SELECT sentin8_set_tenant_context($1, NULL, NULL, NULL, false, false, false, NULL, $2)",
+    )
+    .bind(env_id)
+    .bind(STREAM_FAMILY)
+    .execute(&mut *conn)
+    .await
+    .map_err(OutboxError::Db)?;
     emit_tx(&mut *conn, env_id, event_type, payload, publisher).await
 }
 

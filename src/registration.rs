@@ -8,13 +8,13 @@
 //! Output via `--print-registration` flag. See `sentin8/design/sentin8-service-self-registration-design.md`.
 
 use sentin8::registration::{
-    AdminScope, AdminUi, AdminUiPage, PgRole, Registration, SqlMigration,
-    PolicySetDecl, RelationDecl, M2mGrant,
+    AdminScope, AdminUi, AdminUiPage, M2mGrant, PgRole, PolicySetDecl, Registration, RelationDecl,
+    SqlMigration,
 };
 use utoipa::OpenApi;
 
 const PG_ROLES: &[PgRole] = &[
-        // Granular scopes (service:resource:action) -- no broad
+    // Granular scopes (service:resource:action) -- no broad
     // upsell:read/write pair. The role OAuth scope list matches what the
     // handlers actually require (verified against require_any_scope calls).
     PgRole {
@@ -37,11 +37,19 @@ const PG_ROLES: &[PgRole] = &[
 const M2M_GRANTS: &[M2mGrant] = &[
     M2mGrant {
         workload: "hotel8:upsell",
-        scopes: &["sentin8:bus:produce", "sentin8:bus:consume", "sentin8:stat:measure"],
+        scopes: &[
+            "sentin8:bus:produce",
+            "sentin8:bus:consume",
+            "sentin8:stat:measure",
+        ],
     },
     M2mGrant {
         workload: "upsell",
-        scopes: &["sentin8:bus:produce", "sentin8:bus:consume", "sentin8:stat:measure"],
+        scopes: &[
+            "sentin8:bus:produce",
+            "sentin8:bus:consume",
+            "sentin8:stat:measure",
+        ],
     },
     M2mGrant {
         workload: "upsell-audit",
@@ -62,18 +70,63 @@ const M2M_GRANTS: &[M2mGrant] = &[
     // Settlement lane (bill8): accepted-upsell charges + token consume.
     M2mGrant {
         workload: "upsell-payments",
-        scopes: &["bill8:payments:charges:write", "bill8:payments:tokens:write"],
+        scopes: &[
+            "bill8:payments:charges:write",
+            "bill8:payments:tokens:write",
+        ],
     },
 ];
 
 const ADMIN_UI_PAGES: &[AdminUiPage] = &[
-    AdminUiPage { route: "overview", label: "Overview", ui_endpoint: "/v1/admin/ui/overview", data_endpoint: "/v1/admin/overview", icon: "0xe1b1" },
-    AdminUiPage { route: "offers", label: "Offers", ui_endpoint: "/v1/admin/ui/offers", data_endpoint: "/v1/admin/offers", icon: "0xe39c" },
-    AdminUiPage { route: "settings", label: "Settings", ui_endpoint: "/v1/admin/ui/settings", data_endpoint: "/v1/admin/settings", icon: "0xe57f" },    // Sentin8:Policy admin surface (Shield pattern).
-    AdminUiPage { route: "policy-sets", label: "Policy Sets", ui_endpoint: "/v1/admin/ui/policy-sets", data_endpoint: "/v1/admin/policy-sets", icon: "0xe8b8" },
-    AdminUiPage { route: "policy-decisions", label: "Policy Decisions", ui_endpoint: "/v1/admin/ui/policy-decisions", data_endpoint: "/v1/admin/policy-decisions", icon: "0xf070" },
-    AdminUiPage { route: "relations", label: "Relations", ui_endpoint: "/v1/admin/ui/relations", data_endpoint: "/v1/admin/relations", icon: "0xe572" },
-    AdminUiPage { route: "attributes", label: "Attributes", ui_endpoint: "/v1/admin/ui/attributes", data_endpoint: "/v1/admin/attributes", icon: "0xe8d3" },
+    AdminUiPage {
+        route: "overview",
+        label: "Overview",
+        ui_endpoint: "/v1/admin/ui/overview",
+        data_endpoint: "/v1/admin/overview",
+        icon: "0xe1b1",
+    },
+    AdminUiPage {
+        route: "offers",
+        label: "Offers",
+        ui_endpoint: "/v1/admin/ui/offers",
+        data_endpoint: "/v1/admin/offers",
+        icon: "0xe39c",
+    },
+    AdminUiPage {
+        route: "settings",
+        label: "Settings",
+        ui_endpoint: "/v1/admin/ui/settings",
+        data_endpoint: "/v1/admin/settings",
+        icon: "0xe57f",
+    }, // Sentin8:Policy admin surface (Shield pattern).
+    AdminUiPage {
+        route: "policy-sets",
+        label: "Policy Sets",
+        ui_endpoint: "/v1/admin/ui/policy-sets",
+        data_endpoint: "/v1/admin/policy-sets",
+        icon: "0xe8b8",
+    },
+    AdminUiPage {
+        route: "policy-decisions",
+        label: "Policy Decisions",
+        ui_endpoint: "/v1/admin/ui/policy-decisions",
+        data_endpoint: "/v1/admin/policy-decisions",
+        icon: "0xf070",
+    },
+    AdminUiPage {
+        route: "relations",
+        label: "Relations",
+        ui_endpoint: "/v1/admin/ui/relations",
+        data_endpoint: "/v1/admin/relations",
+        icon: "0xe572",
+    },
+    AdminUiPage {
+        route: "attributes",
+        label: "Attributes",
+        ui_endpoint: "/v1/admin/ui/attributes",
+        data_endpoint: "/v1/admin/attributes",
+        icon: "0xe8d3",
+    },
 ];
 
 /// The Shield text of the declared scope-mirror set — public so the
@@ -105,7 +158,8 @@ const RELATIONS: &[RelationDecl] = &[];
 const SQL_1_INIT: &str = include_str!("../sql/init.sql");
 
 fn openapi_spec() -> serde_json::Value {
-    serde_json::to_value(crate::openapi::UpsellOpenApi::openapi()).unwrap_or(serde_json::Value::Null)
+    serde_json::to_value(crate::openapi::UpsellOpenApi::openapi())
+        .unwrap_or(serde_json::Value::Null)
 }
 
 /// Print the registration JSON to stdout.
@@ -117,11 +171,23 @@ pub fn print(section: Option<String>) -> anyhow::Result<()> {
         // Admin scopes for org/env-admin role inheritance (runtime-registered
         // via vertical enroll -- the platform never hardcodes these).
         admin_scopes: &[
-            AdminScope::Typed { role: "hotel8:upsell:admin", scope: "hotel8:upsell:read" },
-            AdminScope::Typed { role: "hotel8:upsell:admin", scope: "hotel8:upsell:admin" },
-        // Policy-admin surface (policy design §3.6; principles §6.0b per-service scope).
-        AdminScope::Typed { role: "hotel8:upsell:admin", scope: "hotel8:upsell:policy:read" },
-        AdminScope::Typed { role: "hotel8:upsell:admin", scope: "hotel8:upsell:policy:write" },
+            AdminScope::Typed {
+                role: "hotel8:upsell:admin",
+                scope: "hotel8:upsell:read",
+            },
+            AdminScope::Typed {
+                role: "hotel8:upsell:admin",
+                scope: "hotel8:upsell:admin",
+            },
+            // Policy-admin surface (policy design §3.6; principles §6.0b per-service scope).
+            AdminScope::Typed {
+                role: "hotel8:upsell:admin",
+                scope: "hotel8:upsell:policy:read",
+            },
+            AdminScope::Typed {
+                role: "hotel8:upsell:admin",
+                scope: "hotel8:upsell:policy:write",
+            },
         ],
         error_codes: &[],
         consent_providers: &[],
@@ -132,9 +198,11 @@ pub fn print(section: Option<String>) -> anyhow::Result<()> {
             service_flag: "upsell",
             pages: ADMIN_UI_PAGES,
         }),
-        sql_migrations: vec![
-            SqlMigration { version: 1, name: "init", sql: SQL_1_INIT },
-        ],
+        sql_migrations: vec![SqlMigration {
+            version: 1,
+            name: "init",
+            sql: SQL_1_INIT,
+        }],
         pg_roles: PG_ROLES,
         audit_findings: None,
         service_actions: None,

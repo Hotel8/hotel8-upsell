@@ -37,4 +37,3 @@ pub async fn run_pricing_module(
         Err(e) => Err(format!("Func execute failed: {e}")),
     }
 }
-

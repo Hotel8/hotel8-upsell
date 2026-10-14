@@ -4,9 +4,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Axum server setup for Upsell.
-use std::sync::Arc;
-use axum::routing::{get, post, put, delete};
 use crate::handlers::AppState;
+use axum::routing::{delete, get, post, put};
+use std::sync::Arc;
 
 /// Build a cert-presenting HTTP transport for `workload` (CERTFREE-4V,
 /// auth DESIGN §4.3f): mint-or-load the Acme-issued pair and wrap it in
@@ -17,10 +17,7 @@ use crate::handlers::AppState;
 /// # Errors
 /// Returns the certificate-ensure or transport-build failure (the
 /// caller logs and degrades).
-async fn build_workload_http(
-    auth_issuer: &str,
-    workload: &str,
-) -> anyhow::Result<reqwest::Client> {
+async fn build_workload_http(auth_issuer: &str, workload: &str) -> anyhow::Result<reqwest::Client> {
     let cert = sentin8::auth::m2m::ensure_workload_certificate(
         auth_issuer,
         workload,
@@ -36,8 +33,9 @@ async fn build_workload_http(
         .map_err(|e| anyhow::anyhow!("workload '{workload}' transport: {e}"))
 }
 
-pub async fn build_state(core: sentin8::shell::ServiceCore)
-    -> anyhow::Result<crate::handlers::AppState> {
+pub async fn build_state(
+    core: sentin8::shell::ServiceCore,
+) -> anyhow::Result<crate::handlers::AppState> {
     let mut config = crate::config::UpsellConfig::from_env();
 
     // Cert-presenting Bus client (CERTFREE-4V): the `upsell` workload
@@ -84,7 +82,9 @@ pub async fn build_state(core: sentin8::shell::ServiceCore)
     // token consume).
     match build_workload_http(&config.sentin8_auth_issuer, "upsell-payments").await {
         Ok(http) => config.payments_http = Some(http),
-        Err(e) => tracing::warn!(error = %e, "upsell-payments transport unavailable — upgrade payments degraded"),
+        Err(e) => {
+            tracing::warn!(error = %e, "upsell-payments transport unavailable — upgrade payments degraded")
+        }
     }
 
     // CERTFREE-4F: the Func execution lane presents the `upsell`
@@ -108,10 +108,14 @@ pub async fn build_state(core: sentin8::shell::ServiceCore)
                     &cert.key_path,
                 ) {
                     Ok(c) => config.func_client = Some(c),
-                    Err(e) => tracing::warn!(error = %e, "upsell func transport build failed — pricing falls back to the local rule"),
+                    Err(e) => {
+                        tracing::warn!(error = %e, "upsell func transport build failed — pricing falls back to the local rule")
+                    }
                 }
             }
-            Err(e) => tracing::warn!(error = %e, "upsell func certificate not ready — pricing falls back to the local rule"),
+            Err(e) => {
+                tracing::warn!(error = %e, "upsell func certificate not ready — pricing falls back to the local rule")
+            }
         }
     }
 
@@ -150,73 +154,137 @@ pub async fn build_state(core: sentin8::shell::ServiceCore)
 /// owns the boot sequence, state binding, OpenAPI merge and the standard
 /// middleware stack; this adds ONLY routes (including the service's own
 /// `/v1/health` — custom payload).
-pub fn routes(router: axum::Router<crate::handlers::AppState>)
-    -> axum::Router<crate::handlers::AppState> {
-   router
+pub fn routes(
+    router: axum::Router<crate::handlers::AppState>,
+) -> axum::Router<crate::handlers::AppState> {
+    router
         .route("/v1/health", get(crate::handlers::health))
         // ── Admin UI (RFW) ─────────────────────────────────────────────────
         .route("/v1/admin/ui/{*page}", get(crate::admin_ui::get_admin_ui))
         // ── Sentin8:Policy admin API (shared implementation,
         // handlers generic over this AppState).
-        .route("/v1/admin/policy-sets",
-            get(sentin8::shield::admin::list_policy_sets::<crate::handlers::AppState>))
-        .route("/v1/admin/policy-sets/{name}",
+        .route(
+            "/v1/admin/policy-sets",
+            get(sentin8::shield::admin::list_policy_sets::<crate::handlers::AppState>),
+        )
+        .route(
+            "/v1/admin/policy-sets/{name}",
             get(sentin8::shield::admin::get_policy_set::<crate::handlers::AppState>)
                 .put(sentin8::shield::admin::put_policy_set::<crate::handlers::AppState>)
-                .delete(sentin8::shield::admin::delete_policy_set::<crate::handlers::AppState>))
-        .route("/v1/admin/policy-sets/{name}/test",
-            post(sentin8::shield::admin::test_policy_set::<crate::handlers::AppState>))
-        .route("/v1/admin/policy-sets/enforce",
-            post(sentin8::shield::admin::admin_enforce_policy_set::<crate::handlers::AppState>))
-        .route("/v1/admin/policy-sets/shadow",
-            post(sentin8::shield::admin::admin_shadow_policy_set::<crate::handlers::AppState>))
-        .route("/v1/admin/policy-sets/disable",
-            post(sentin8::shield::admin::admin_disable_policy_set::<crate::handlers::AppState>))
-        .route("/v1/admin/relations",
+                .delete(sentin8::shield::admin::delete_policy_set::<crate::handlers::AppState>),
+        )
+        .route(
+            "/v1/admin/policy-sets/{name}/test",
+            post(sentin8::shield::admin::test_policy_set::<crate::handlers::AppState>),
+        )
+        .route(
+            "/v1/admin/policy-sets/enforce",
+            post(sentin8::shield::admin::admin_enforce_policy_set::<crate::handlers::AppState>),
+        )
+        .route(
+            "/v1/admin/policy-sets/shadow",
+            post(sentin8::shield::admin::admin_shadow_policy_set::<crate::handlers::AppState>),
+        )
+        .route(
+            "/v1/admin/policy-sets/disable",
+            post(sentin8::shield::admin::admin_disable_policy_set::<crate::handlers::AppState>),
+        )
+        .route(
+            "/v1/admin/relations",
             get(sentin8::shield::admin::list_relations::<crate::handlers::AppState>)
                 .put(sentin8::shield::admin::put_relation::<crate::handlers::AppState>)
-                .delete(sentin8::shield::admin::delete_relation::<crate::handlers::AppState>))
-        .route("/v1/admin/relations/check",
-            get(sentin8::shield::admin::check_relation::<crate::handlers::AppState>))
-        .route("/v1/admin/attributes",
+                .delete(sentin8::shield::admin::delete_relation::<crate::handlers::AppState>),
+        )
+        .route(
+            "/v1/admin/relations/check",
+            get(sentin8::shield::admin::check_relation::<crate::handlers::AppState>),
+        )
+        .route(
+            "/v1/admin/attributes",
             get(sentin8::shield::admin::list_attributes::<crate::handlers::AppState>)
                 .put(sentin8::shield::admin::put_attribute::<crate::handlers::AppState>)
-                .delete(sentin8::shield::admin::delete_attribute::<crate::handlers::AppState>))
-        .route("/v1/offers", post(crate::handlers::create_offer).get(crate::handlers::list_offers))
+                .delete(sentin8::shield::admin::delete_attribute::<crate::handlers::AppState>),
+        )
+        .route(
+            "/v1/offers",
+            post(crate::handlers::create_offer).get(crate::handlers::list_offers),
+        )
         .route("/v1/offers/{offer_id}", put(crate::handlers::update_offer))
-        .route("/v1/rules", post(crate::handlers::create_rule).get(crate::handlers::list_rules))
+        .route(
+            "/v1/rules",
+            post(crate::handlers::create_rule).get(crate::handlers::list_rules),
+        )
         .route("/v1/rules/{rule_id}", delete(crate::handlers::delete_rule))
         .route("/v1/rules/test", post(crate::handlers::test_rule))
-        .route("/v1/offers/generate", post(crate::handlers::generate_offers))
-        .route("/v1/offers/for-reservation", get(crate::handlers::get_offers_for_reservation))
+        .route(
+            "/v1/offers/generate",
+            post(crate::handlers::generate_offers),
+        )
+        .route(
+            "/v1/offers/for-reservation",
+            get(crate::handlers::get_offers_for_reservation),
+        )
         .route("/v1/offers/accept", post(crate::handlers::accept_offer))
         .route("/v1/offers/decline", post(crate::handlers::decline_offer))
         .route("/v1/offers/status", get(crate::handlers::get_offer_status))
         .route("/v1/analytics", get(crate::handlers::get_analytics))
         .route("/v1/offers/expire", post(crate::handlers::expire_offers))
         // Eligibility types
-        .route("/v1/eligibility/types", get(crate::handlers::list_eligibility_types))
+        .route(
+            "/v1/eligibility/types",
+            get(crate::handlers::list_eligibility_types),
+        )
         // Offer configuration
-        .route("/v1/offers/{offer_id}/configure", put(crate::handlers::configure_offer))
+        .route(
+            "/v1/offers/{offer_id}/configure",
+            put(crate::handlers::configure_offer),
+        )
         // Cron daily generation
-        .route("/v1/cron/daily-generation", post(crate::handlers::cron_daily_generation))
+        .route(
+            "/v1/cron/daily-generation",
+            post(crate::handlers::cron_daily_generation),
+        )
         // PMS integration
-        .route("/v1/integration/pms", get(crate::handlers::fetch_hotel8_pms_data))
+        .route(
+            "/v1/integration/pms",
+            get(crate::handlers::fetch_hotel8_pms_data),
+        )
         // Func dynamic pricing
-        .route("/v1/integration/func/dynamic-price", post(crate::handlers::compute_dynamic_price))
+        .route(
+            "/v1/integration/func/dynamic-price",
+            post(crate::handlers::compute_dynamic_price),
+        )
         // Post notification
-        .route("/v1/integration/post/notify", post(crate::handlers::send_offer_notification))
+        .route(
+            "/v1/integration/post/notify",
+            post(crate::handlers::send_offer_notification),
+        )
         // Payments payment
-        .route("/v1/integration/payments/payment", post(crate::handlers::process_upgrade_payment))
+        .route(
+            "/v1/integration/payments/payment",
+            post(crate::handlers::process_upgrade_payment),
+        )
         // PMS reservation modification
-        .route("/v1/integration/pms/modify-reservation", post(crate::handlers::modify_reservation_on_acceptance))
+        .route(
+            "/v1/integration/pms/modify-reservation",
+            post(crate::handlers::modify_reservation_on_acceptance),
+        )
         // Post confirmation
-        .route("/v1/integration/post/confirmation", post(crate::handlers::send_acceptance_confirmation))
+        .route(
+            "/v1/integration/post/confirmation",
+            post(crate::handlers::send_acceptance_confirmation),
+        )
         // A/B testing
         .route("/v1/ab-tests", post(crate::handlers::create_ab_test))
-        .route("/v1/ab-tests/results", get(crate::handlers::get_ab_test_results))
+        .route(
+            "/v1/ab-tests/results",
+            get(crate::handlers::get_ab_test_results),
+        )
         // Rate limiting config
-        .route("/v1/rate-limits", get(crate::handlers::get_rate_limit_config))
+        .route(
+            "/v1/rate-limits",
+            get(crate::handlers::get_rate_limit_config),
+        )
 }
 
 /// Shared policy-admin surface accessor — the shared

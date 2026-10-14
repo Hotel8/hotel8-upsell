@@ -11,27 +11,26 @@
 //! merge, middleware stack and PQ-TLS listener are owned by the shell. This
 //! binary supplies only its registration data, state and routes.
 
-#[allow(dead_code)]
-mod event_consumer;
-mod offer_state;
-mod func_exec;
-mod payments_exec;
-mod pricing;
-mod event_emit;
 mod admin_ui;
 mod auth;
 #[allow(dead_code)]
 mod config;
 #[allow(dead_code)]
+mod event_consumer;
+mod event_emit;
+mod func_exec;
+#[allow(dead_code)]
 mod handlers;
+mod offer_state;
 mod openapi;
-mod registration;
+mod payments_exec;
 pub mod policy;
+mod pricing;
+mod registration;
 #[allow(dead_code)]
 mod server;
 
 use utoipa::OpenApi;
-
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
