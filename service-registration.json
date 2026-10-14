@@ -1,0 +1,8 @@
+{
+  "vertical": "hotel8",
+  "services": [
+    {
+      "service_type": "hotel8:upsell"
+    }
+  ]
+}
