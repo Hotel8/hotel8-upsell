@@ -2,7 +2,11 @@
   "vertical": "hotel8",
   "services": [
     {
-      "service_type": "hotel8:upsell"
+      "service_type": "hotel8:upsell",
+      "telemetry_property": {
+        "slug": "upsell",
+        "name": "Hotel8:Upsell Telemetry"
+      }
     }
   ]
 }
