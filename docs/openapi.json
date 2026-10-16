@@ -1,0 +1,109 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "hotel8-upsell",
+    "description": "Sentin8 Hotel8:Upsell — Upsell Engine service.",
+    "license": {
+      "name": "MIT OR Apache-2.0",
+      "identifier": "MIT OR Apache-2.0"
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/v1/admin/offers": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "summary": "`GET /v1/offers`",
+        "operationId": "list_offers",
+        "responses": {
+          "200": {
+            "description": "List of offers",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "403": {
+            "description": "Missing upsell:admin scope"
+          }
+        },
+        "security": [
+          {
+            "upsell:admin": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "upsell"
+        ],
+        "summary": "`POST /v1/offers`",
+        "operationId": "create_offer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Offer created",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "403": {
+            "description": "Missing upsell:admin scope"
+          }
+        },
+        "security": [
+          {
+            "upsell:admin": []
+          }
+        ]
+      }
+    },
+    "/v1/admin/offers/{id}": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "summary": "`GET /v1/offers/status`",
+        "operationId": "get_offer_status",
+        "responses": {
+          "200": {
+            "description": "Offer status",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "403": {
+            "description": "Missing upsell:admin scope"
+          }
+        },
+        "security": [
+          {
+            "upsell:admin": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {},
+  "security": [],
+  "tags": [
+    {
+      "name": "upsell",
+      "description": "Hotel8:Upsell admin API — offers"
+    }
+  ]
+}
