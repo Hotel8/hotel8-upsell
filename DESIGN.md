@@ -91,7 +91,7 @@ sequenceDiagram
     G->>U: POST /v1/offers/{id}/accept
     U->>S: require(hotel8:upsell:reservation:write)
     S-->>U: permit
-    U->>DB: BEGIN; offer state → accepted; journal; outbox; COMMIT
+    U->>DB: BEGIN, offer state → accepted, journal, outbox, COMMIT
     U->>PAY: M2M charge create (bill8:payments:charges:write)
     PAY-->>U: charge → hotel8:upsell:payment:processed
     U-->>G: 200 confirmation

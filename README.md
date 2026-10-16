@@ -26,13 +26,13 @@ eligibility) as a Shield concern.
 ```mermaid
 graph TD
     subgraph "hotel8:upsell process"
-        API[/v1 rules, offers, admin surfaces/] --> MW2[Auth + Policy + RLS]
+        API[/"v1 rules, offers, admin surfaces"/] --> MW2[Auth + Policy + RLS]
         MW2 --> ENG[eligibility engine + dynamic pricing]
-        ENG --> DB2[(upsell.* tables)]
-        ENG --> OB2[(upsell.outbox)]
-        AJ2[(upsell.audit_journal)] --> PUSHER[shell audit pusher]
+        ENG --> DB2["(upsell.* tables)"]
+        ENG --> OB2["(upsell.outbox)"]
+        AJ2["(upsell.audit_journal)"] --> PUSHER[shell audit pusher]
         CON2[direct consumer] -- "hotel8:pms:reservation:created" --> ENG
-        CRON2[daily generation (Sentin8:Cron)] --> ENG
+        CRON2["daily generation (Sentin8:Cron)"] --> ENG
     end
     DB2 --> API
 ```
