@@ -1,4 +1,4 @@
-# DESIGN.md: Hotel8:Upsell — Detailed Design Document
+# Hotel8:Upsell — Detailed Design Document
 
 ## 1. Scope & Context
 
