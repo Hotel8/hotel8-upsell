@@ -56,6 +56,17 @@ fn err_db(e: sqlx::Error) -> (StatusCode, String) {
 fn err_emit(e: sentin8::bus::outbox::OutboxError) -> (StatusCode, String) {
     (StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
 }
+#[utoipa::path(
+    get,
+    path = "/v1/health",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn health(
     axum::extract::State(_state): axum::extract::State<AppState>,
@@ -68,7 +79,7 @@ pub async fn health(
 /// `POST /v1/offers`
 #[utoipa::path(
     post,
-    path = "/v1/admin/offers",
+    path = "/v1/offers",
     request_body = serde_json::Value,
     responses(
         (status = 200, description = "Offer created", body = serde_json::Value),
@@ -133,7 +144,7 @@ pub async fn create_offer(
 /// `GET /v1/offers`
 #[utoipa::path(
     get,
-    path = "/v1/admin/offers",
+    path = "/v1/offers",
     responses(
         (status = 200, description = "List of offers", body = serde_json::Value),
         (status = 403, description = "Missing upsell:admin scope"),
@@ -172,6 +183,17 @@ pub async fn list_offers(
 }
 
 // ── -Upsell Rule CRUD + Offer config + Rule testing ──
+#[utoipa::path(
+    put,
+    path = "/v1/offers/{offer_id}",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn update_offer(
     State(state): State<AppState>,
@@ -213,6 +235,17 @@ pub async fn update_offer(
         serde_json::json!({ "id": row.get::<uuid::Uuid, _>("id"), "offer_code": row.get::<String, _>("offer_code"), "offer_name": row.get::<String, _>("offer_name"), "price": row.get::<String, _>("price"), "category": row.get::<String, _>("category"), "status": s }),
     ))
 }
+#[utoipa::path(
+    post,
+    path = "/v1/rules",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn create_rule(
     State(state): State<AppState>,
@@ -261,6 +294,17 @@ pub async fn create_rule(
         serde_json::json!({ "id": id, "offer_id": offer_id, "rule_type": rule_type, "rule_value": rule_value }),
     ))
 }
+#[utoipa::path(
+    get,
+    path = "/v1/rules",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn list_rules(
     State(state): State<AppState>,
@@ -296,6 +340,17 @@ pub async fn list_rules(
     conn.commit().await.map_err(err_db)?;
     Ok(Json(serde_json::json!({ "items": items })))
 }
+#[utoipa::path(
+    delete,
+    path = "/v1/rules/{rule_id}",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn delete_rule(
     State(state): State<AppState>,
@@ -322,6 +377,17 @@ pub async fn delete_rule(
     Ok(StatusCode::NO_CONTENT)
 }
 
+#[utoipa::path(
+    post,
+    path = "/v1/rules/test",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 pub async fn test_rule(
     State(state): State<AppState>,
     headers: axum::http::HeaderMap,
@@ -392,6 +458,17 @@ pub async fn test_rule(
 }
 
 // ── -Offer generation + Get offers for reservation ──
+#[utoipa::path(
+    post,
+    path = "/v1/offers/generate",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn generate_offers(
     State(state): State<AppState>,
@@ -434,6 +511,17 @@ pub async fn generate_offers(
     conn.commit().await.map_err(err_db)?;
     Ok(Json(serde_json::json!({ "generated": generated })))
 }
+#[utoipa::path(
+    get,
+    path = "/v1/offers/for-reservation",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn get_offers_for_reservation(
     State(state): State<AppState>,
@@ -469,6 +557,17 @@ pub async fn get_offers_for_reservation(
 }
 
 // ── -Accept, decline, status ──
+#[utoipa::path(
+    post,
+    path = "/v1/offers/accept",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn accept_offer(
     State(state): State<AppState>,
@@ -523,6 +622,17 @@ pub async fn accept_offer(
         serde_json::json!({ "transaction_id": row.get::<uuid::Uuid, _>("id"), "status": state.label(), "accepted": true }),
     ))
 }
+#[utoipa::path(
+    post,
+    path = "/v1/offers/decline",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn decline_offer(
     State(state): State<AppState>,
@@ -572,7 +682,7 @@ pub async fn decline_offer(
 /// `GET /v1/offers/status`
 #[utoipa::path(
     get,
-    path = "/v1/admin/offers/{id}",
+    path = "/v1/offers/status",
     responses(
         (status = 200, description = "Offer status", body = serde_json::Value),
         (status = 403, description = "Missing upsell:admin scope"),
@@ -615,6 +725,17 @@ pub async fn get_offer_status(
 }
 
 // ── Analytics ──
+#[utoipa::path(
+    get,
+    path = "/v1/analytics",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn get_analytics(
     State(state): State<AppState>,
@@ -666,6 +787,17 @@ pub async fn get_analytics(
 }
 
 // ── Offer expiry ──
+#[utoipa::path(
+    post,
+    path = "/v1/offers/expire",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn expire_offers(
     State(state): State<AppState>,
@@ -711,6 +843,17 @@ pub async fn expire_offers(
 }
 
 // ── Eligibility criteria types ──
+#[utoipa::path(
+    get,
+    path = "/v1/eligibility/types",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn list_eligibility_types(
     State(_state): State<AppState>,
@@ -739,6 +882,17 @@ pub async fn list_eligibility_types(
 }
 
 // ── Offer configuration with pricing strategy ──
+#[utoipa::path(
+    put,
+    path = "/v1/offers/{offer_id}/configure",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn configure_offer(
     State(state): State<AppState>,
@@ -801,6 +955,17 @@ pub async fn configure_offer(
 }
 
 // ── Cron job stub for daily offer generation ──
+#[utoipa::path(
+    post,
+    path = "/v1/cron/daily-generation",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell-cron",
+)]
 
 pub async fn cron_daily_generation(
     State(state): State<AppState>,
@@ -905,6 +1070,17 @@ pub async fn cron_daily_generation(
 }
 
 // ── PMS integration — fetch upcoming reservations, real-time inventory, guest profiles ──
+#[utoipa::path(
+    get,
+    path = "/v1/integration/pms",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn fetch_hotel8_pms_data(
     State(state): State<AppState>,
@@ -1006,6 +1182,17 @@ pub async fn fetch_hotel8_pms_data(
 }
 
 // ── Func integration — execute ML pricing model (WASM) for dynamic offers ──
+#[utoipa::path(
+    post,
+    path = "/v1/integration/func/dynamic-price",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell-cron",
+)]
 
 pub async fn compute_dynamic_price(
     State(state): State<AppState>,
@@ -1076,6 +1263,17 @@ pub async fn compute_dynamic_price(
 }
 
 // ── Post integration — send offer notification to guest ──
+#[utoipa::path(
+    post,
+    path = "/v1/integration/post/notify",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell-cron",
+)]
 
 pub async fn send_offer_notification(
     State(state): State<AppState>,
@@ -1108,6 +1306,17 @@ pub async fn send_offer_notification(
 }
 
 // ── Payments integration — process upgrade payment ──
+#[utoipa::path(
+    post,
+    path = "/v1/integration/payments/payment",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell-cron",
+)]
 
 pub async fn process_upgrade_payment(
     State(state): State<AppState>,
@@ -1180,6 +1389,17 @@ pub async fn process_upgrade_payment(
 }
 
 // ── PMS integration — modify reservation on acceptance ──
+#[utoipa::path(
+    post,
+    path = "/v1/integration/pms/modify-reservation",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell-cron",
+)]
 
 pub async fn modify_reservation_on_acceptance(
     State(state): State<AppState>,
@@ -1246,6 +1466,17 @@ pub async fn modify_reservation_on_acceptance(
 }
 
 // ── Post integration — send acceptance confirmation ──
+#[utoipa::path(
+    post,
+    path = "/v1/integration/post/confirmation",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell-cron",
+)]
 
 pub async fn send_acceptance_confirmation(
     State(state): State<AppState>,
@@ -1281,6 +1512,17 @@ pub async fn send_acceptance_confirmation(
 }
 
 // ── A/B testing support ──
+#[utoipa::path(
+    post,
+    path = "/v1/ab-tests",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn create_ab_test(
     State(state): State<AppState>,
@@ -1346,6 +1588,17 @@ pub async fn create_ab_test(
         serde_json::json!({ "offer_id": offer_id, "variants": created }),
     ))
 }
+#[utoipa::path(
+    get,
+    path = "/v1/ab-tests/results",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn get_ab_test_results(
     State(state): State<AppState>,
@@ -1402,6 +1655,17 @@ pub async fn get_ab_test_results(
 }
 
 // ── Rate limiting on offer generation ──
+#[utoipa::path(
+    get,
+    path = "/v1/rate-limits",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell",
+)]
 
 pub async fn get_rate_limit_config(
     State(state): State<AppState>,

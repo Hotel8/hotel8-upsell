@@ -1,0 +1,732 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "hotel8-upsell",
+    "description": "Sentin8 Hotel8:Upsell — Upsell Engine service.",
+    "license": {
+      "name": "MIT OR Apache-2.0",
+      "identifier": "MIT OR Apache-2.0"
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/v1/ab-tests": {
+      "post": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "create_ab_test",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/ab-tests/results": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "get_ab_test_results",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/admin/ui/{page}": {
+      "get": {
+        "tags": [
+          "upsell-admin"
+        ],
+        "operationId": "get_admin_ui",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/analytics": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "get_analytics",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/cron/daily-generation": {
+      "post": {
+        "tags": [
+          "upsell-cron"
+        ],
+        "operationId": "cron_daily_generation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/eligibility/types": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "list_eligibility_types",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/integration/func/dynamic-price": {
+      "post": {
+        "tags": [
+          "upsell-cron"
+        ],
+        "operationId": "compute_dynamic_price",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/integration/payments/payment": {
+      "post": {
+        "tags": [
+          "upsell-cron"
+        ],
+        "operationId": "process_upgrade_payment",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/integration/pms": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "fetch_hotel8_pms_data",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/integration/pms/modify-reservation": {
+      "post": {
+        "tags": [
+          "upsell-cron"
+        ],
+        "operationId": "modify_reservation_on_acceptance",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/integration/post/confirmation": {
+      "post": {
+        "tags": [
+          "upsell-cron"
+        ],
+        "operationId": "send_acceptance_confirmation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/integration/post/notify": {
+      "post": {
+        "tags": [
+          "upsell-cron"
+        ],
+        "operationId": "send_offer_notification",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/offers": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "summary": "`GET /v1/offers`",
+        "operationId": "list_offers",
+        "responses": {
+          "200": {
+            "description": "List of offers",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "403": {
+            "description": "Missing upsell:admin scope"
+          }
+        },
+        "security": [
+          {
+            "upsell:admin": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "upsell"
+        ],
+        "summary": "`POST /v1/offers`",
+        "operationId": "create_offer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Offer created",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "403": {
+            "description": "Missing upsell:admin scope"
+          }
+        },
+        "security": [
+          {
+            "upsell:admin": []
+          }
+        ]
+      }
+    },
+    "/v1/offers/accept": {
+      "post": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "accept_offer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/offers/decline": {
+      "post": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "decline_offer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/offers/expire": {
+      "post": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "expire_offers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/offers/for-reservation": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "get_offers_for_reservation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/offers/generate": {
+      "post": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "generate_offers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/offers/status": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "summary": "`GET /v1/offers/status`",
+        "operationId": "get_offer_status",
+        "responses": {
+          "200": {
+            "description": "Offer status",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "403": {
+            "description": "Missing upsell:admin scope"
+          }
+        },
+        "security": [
+          {
+            "upsell:admin": []
+          }
+        ]
+      }
+    },
+    "/v1/offers/{offer_id}": {
+      "put": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "update_offer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/offers/{offer_id}/configure": {
+      "put": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "configure_offer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/rate-limits": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "get_rate_limit_config",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/rules": {
+      "get": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "list_rules",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "create_rule",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/rules/test": {
+      "post": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "test_rule",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/rules/{rule_id}": {
+      "delete": {
+        "tags": [
+          "upsell"
+        ],
+        "operationId": "delete_rule",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {},
+  "security": [],
+  "tags": [
+    {
+      "name": "upsell",
+      "description": "Hotel8:Upsell admin API — offers"
+    }
+  ]
+}

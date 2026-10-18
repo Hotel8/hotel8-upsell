@@ -15,6 +15,17 @@ use axum::{
 use sentin8::rfw::page::*;
 use sentin8::rfw::response::AdminUiResponse;
 use sentin8::rfw::widget::*;
+#[utoipa::path(
+    get,
+    path = "/v1/admin/ui/{page}",
+    responses(
+        (status = 200, description = "OK", body = serde_json::Value),
+        (status = 401, description = "Not authenticated"),
+        (status = 403, description = "Forbidden"),
+    ),
+    security(),
+    tag = "upsell-admin",
+)]
 
 pub async fn get_admin_ui(
     State(state): State<AppState>,
