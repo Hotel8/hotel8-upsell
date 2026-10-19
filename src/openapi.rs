@@ -58,7 +58,102 @@ use utoipa::OpenApi;
         crate::handlers::send_offer_notification,
         crate::handlers::cron_daily_generation,
     ),
-    components(schemas()),
+    components(
+        // ── Health
+        schemas(hotel8::upsell::contracts::UpsellHealth),
+        // ── Offers CRUD (alphabetical)
+        schemas(
+            hotel8::upsell::contracts::OfferConfigureRequest,
+            hotel8::upsell::contracts::OfferConfiguredResponse,
+            hotel8::upsell::contracts::OfferCreateRequest,
+            hotel8::upsell::contracts::OfferCreatedResponse,
+            hotel8::upsell::contracts::OfferListQuery,
+            hotel8::upsell::contracts::OfferListResponse,
+            hotel8::upsell::contracts::OfferListRow,
+            hotel8::upsell::contracts::OfferUpdateRequest,
+            hotel8::upsell::contracts::OfferUpdatedResponse,
+        ),
+        // ── Eligibility rules (alphabetical)
+        schemas(
+            hotel8::upsell::contracts::RuleCheckResult,
+            hotel8::upsell::contracts::RuleCreateRequest,
+            hotel8::upsell::contracts::RuleCreatedResponse,
+            hotel8::upsell::contracts::RuleListQuery,
+            hotel8::upsell::contracts::RuleListResponse,
+            hotel8::upsell::contracts::RuleListRow,
+            hotel8::upsell::contracts::RuleTestRequest,
+            hotel8::upsell::contracts::RuleTestResult,
+        ),
+        // ── Eligibility types
+        schemas(
+            hotel8::upsell::contracts::EligibilityType,
+            hotel8::upsell::contracts::EligibilityTypesResponse,
+        ),
+        // ── Offer generation (alphabetical)
+        schemas(
+            hotel8::upsell::contracts::CronDailyGenerationRequest,
+            hotel8::upsell::contracts::CronDailyGenerationResult,
+            hotel8::upsell::contracts::GenerateOffersRequest,
+            hotel8::upsell::contracts::GenerateOffersResult,
+            hotel8::upsell::contracts::GeneratedOffer,
+            hotel8::upsell::contracts::OfferForReservationRow,
+            hotel8::upsell::contracts::OffersForReservationQuery,
+            hotel8::upsell::contracts::OffersForReservationResponse,
+        ),
+        // ── Accept / decline / status (alphabetical)
+        schemas(
+            hotel8::upsell::contracts::AcceptOfferRequest,
+            hotel8::upsell::contracts::DeclineOfferRequest,
+            hotel8::upsell::contracts::OfferAcceptedResponse,
+            hotel8::upsell::contracts::OfferDeclinedResponse,
+            hotel8::upsell::contracts::OfferStatusQuery,
+            hotel8::upsell::contracts::OfferStatusResponse,
+        ),
+        // ── Analytics / expiry (alphabetical)
+        schemas(
+            hotel8::upsell::contracts::AnalyticsQuery,
+            hotel8::upsell::contracts::AnalyticsResponse,
+            hotel8::upsell::contracts::ExpireOffersRequest,
+            hotel8::upsell::contracts::ExpireOffersResult,
+        ),
+        // ── PMS integration passthrough
+        schemas(
+            hotel8::upsell::contracts::ModifyReservationRequest,
+            hotel8::upsell::contracts::ModifyReservationResult,
+            hotel8::upsell::contracts::PmsDataEnvelope,
+            hotel8::upsell::contracts::PmsIntegrationQuery,
+        ),
+        // ── Dynamic pricing (alphabetical)
+        schemas(
+            hotel8::upsell::contracts::DynamicPriceFactors,
+            hotel8::upsell::contracts::DynamicPriceRequest,
+            hotel8::upsell::contracts::DynamicPriceResult,
+        ),
+        // ── Post / Payments integration (alphabetical)
+        schemas(
+            hotel8::upsell::contracts::ConfirmationQueued,
+            hotel8::upsell::contracts::ConfirmationRequest,
+            hotel8::upsell::contracts::NotificationQueued,
+            hotel8::upsell::contracts::NotificationRequest,
+            hotel8::upsell::contracts::UpgradePaymentRequest,
+            hotel8::upsell::contracts::UpgradePaymentResult,
+        ),
+        // ── A/B testing (alphabetical)
+        schemas(
+            hotel8::upsell::contracts::AbTestResultRow,
+            hotel8::upsell::contracts::AbTestResultsQuery,
+            hotel8::upsell::contracts::AbTestResultsResponse,
+            hotel8::upsell::contracts::AbTestVariant,
+            hotel8::upsell::contracts::AbVariantCreated,
+            hotel8::upsell::contracts::CreateAbTestRequest,
+            hotel8::upsell::contracts::CreateAbTestResult,
+        ),
+        // ── Rate limits
+        schemas(
+            hotel8::upsell::contracts::RateLimitConfig,
+            hotel8::upsell::contracts::RateLimitWindow,
+        ),
+    ),
     security(),
     tags(
         (name = "policy", description = "Shield policy administration (shared surface)"),
