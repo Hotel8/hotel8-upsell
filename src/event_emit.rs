@@ -3,21 +3,21 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Hotel8:Upsell
 // SPDX-License-Identifier: Apache-2.0
 
-//! Transactional event emission (outbox-first) — shared across all handlers.
+//! Transactional event emission (outbox-first) - shared across all handlers.
 //!
-//! DBX (AGENTS.md "Inbox-first pattern — local outbox + produce API",
+//! DBX (AGENTS.md "Inbox-first pattern - local outbox + produce API",
 //! architecture-principles §6.7): a `upsell.outbox` row MUST be inserted on
 //! the **same transaction/connection** as the domain change, and insert
 //! errors MUST NOT be silently swallowed. The shell's post-commit relay
 //! (boot step 8b) drains the local outbox and pushes each row to Bus
 //! `POST /v1/produce` (M2M `sentin8:bus:produce`, idempotency_key = row id)
-//! — no BusClient or M2M token is needed on the producer path. A vertical
+//! - no BusClient or M2M token is needed on the producer path. A vertical
 //! never writes another service's durability tables (`sentin8.bus_inbox` is
-//! retired; alignment doc §11–§13 of
+//! retired; alignment doc §11-§13 of
 //! `sentin8-hotel8-architecture-principles-alignment.md`).
 //!
 //! Event types use the platform naming convention
-//! `vertical:service:resource:operation` — colons only, no dots
+//! `vertical:service:resource:operation` - colons only, no dots
 //! (`sentin8-sentin8-bus-technical-design.md` §10.1).
 //!
 //! Publisher identity (bus design §4.5): carries the verified claims'
@@ -67,9 +67,9 @@ impl Publisher {
 }
 
 /// Insert a domain event into the LOCAL outbox `upsell.outbox` **within the
-/// caller's transaction/connection** — the same one that performed the
+/// caller's transaction/connection** - the same one that performed the
 /// domain write (outbox-first). Errors are returned; handlers map them to
-/// 500 via `err_db`-style mapping — a silently lost event is a contract
+/// 500 via `err_db`-style mapping - a silently lost event is a contract
 /// violation. The shell's post-commit relay pushes the row to Bus
 /// (`POST /v1/produce`, idempotency_key = row id) with the carried publisher
 /// subject (§4.5).
@@ -104,7 +104,7 @@ macro_rules! event_payload {
     ($($json:tt)+) => { serde_json::json!($($json)+) };
 }
 
-/// Insert a domain event on a **fresh pool connection** — for handlers with
+/// Insert a domain event on a **fresh pool connection** - for handlers with
 /// no in-flight domain write (integration stubs, module-config updates).
 /// Sets the tenant context on the new connection first (RLS on the outbox
 /// requires `env_id` to match). Errors are returned, never swallowed.

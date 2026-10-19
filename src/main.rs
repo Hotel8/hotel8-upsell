@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Hotel8:Upsell
 // SPDX-License-Identifier: Apache-2.0
 
-//! Sentin8 Upsell — Upsell Engine service.
+//! Sentin8 Upsell - Upsell Engine service.
 //!
 //! Boot runs on the platform `sentin8-shell` crate (design
 //! `sentin8/design/sentin8-sentin8-shell-technical-design.md`): registration

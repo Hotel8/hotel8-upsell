@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Hotel8:Upsell
 // SPDX-License-Identifier: Apache-2.0
 
-//! Hotel8:Upsell integration tests (test-strategy Layer 3) — DB-free.
+//! Hotel8:Upsell integration tests (test-strategy Layer 3) - DB-free.
 //!
 //! Exercises the extracted state machine (`offer_state`) + pricing rule
 //! (`pricing`) exactly as the handlers apply them.
@@ -19,7 +19,7 @@ fn offer_lifecycle_happy_path() {
     assert!(st.can_transition_to(Accepted));
     st = Accepted;
     assert!(states::TransactionState::from_label(st.label()) == Accepted);
-    // Terminal — no further transitions.
+    // Terminal - no further transitions.
     assert!(!st.can_transition_to(Declined));
     assert!(!st.can_transition_to(Expired));
 }

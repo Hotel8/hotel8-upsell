@@ -10,10 +10,10 @@
 //! thin wrappers matching the original call sites (taking `&UpsellConfig` + `&HeaderMap`).
 //!
 //! Step 5 (Shield authorization) is the ONLY gate (DESIGN.md §5). The
-//! `require_any_scope` helper is gone — handlers verify the token (steps 1–4)
+//! `require_any_scope` helper is gone - handlers verify the token (steps 1-4)
 //! with `verify_token`, then evaluate a `hotel8:upsell:<resource>:<action>` Shield
 //! action via `crate::policy::require`. `sys:admin`/org/env-admin scopes pass
-//! through the mirror's admin permits — platform admins never bypass Shield.
+//! through the mirror's admin permits - platform admins never bypass Shield.
 
 use crate::config::UpsellConfig;
 use axum::http::{HeaderMap, StatusCode};

@@ -12,7 +12,7 @@ use std::sync::Arc;
 /// auth DESIGN §4.3f): mint-or-load the Acme-issued pair and wrap it in
 /// a reqwest client. The receiving service's TLS layer authenticates the
 /// handshake and the enroll-published registry map authorizes the
-/// scopes — no bearer token exists on this path.
+/// scopes - no bearer token exists on this path.
 ///
 /// # Errors
 /// Returns the certificate-ensure or transport-build failure (the
@@ -39,7 +39,7 @@ pub async fn build_state(
     let mut config = crate::config::UpsellConfig::from_env();
 
     // Cert-presenting Bus client (CERTFREE-4V): the `upsell` workload
-    // CERTIFICATE is the identity — no DCR, no token (auth DESIGN
+    // CERTIFICATE is the identity - no DCR, no token (auth DESIGN
     // §4.3f); the mint retries while the fleet boots.
     let bus_client = loop {
         match sentin8::bus::client::BusClient::for_workload(
@@ -58,7 +58,7 @@ pub async fn build_state(
     };
 
     // PMS cross-service client (CERTFREE-4V): this service presents its
-    // own `upsell` workload certificate — PMS's TLS layer authenticates
+    // own `upsell` workload certificate - PMS's TLS layer authenticates
     // the handshake and the registry map authorizes the scopes (the
     // `pms:reservations:read` / `pms:profiles:read` grants ride the
     // `upsell` map row). The mint retries while the fleet boots.
@@ -83,12 +83,12 @@ pub async fn build_state(
     match build_workload_http(&config.sentin8_auth_issuer, "upsell-payments").await {
         Ok(http) => config.payments_http = Some(http),
         Err(e) => {
-            tracing::warn!(error = %e, "upsell-payments transport unavailable — upgrade payments degraded")
+            tracing::warn!(error = %e, "upsell-payments transport unavailable - upgrade payments degraded")
         }
     }
 
     // CERTFREE-4F: the Func execution lane presents the `upsell`
-    // workload certificate (FuncClient::with_workload_identity) — Func's
+    // workload certificate (FuncClient::with_workload_identity) - Func's
     // cert-first gate resolves it against the registry map. `None`
     // degrades pricing to the local pure rule (the module path is
     // already optional by design).
@@ -109,12 +109,12 @@ pub async fn build_state(
                 ) {
                     Ok(c) => config.func_client = Some(c),
                     Err(e) => {
-                        tracing::warn!(error = %e, "upsell func transport build failed — pricing falls back to the local rule")
+                        tracing::warn!(error = %e, "upsell func transport build failed - pricing falls back to the local rule")
                     }
                 }
             }
             Err(e) => {
-                tracing::warn!(error = %e, "upsell func certificate not ready — pricing falls back to the local rule")
+                tracing::warn!(error = %e, "upsell func certificate not ready - pricing falls back to the local rule")
             }
         }
     }
@@ -126,7 +126,7 @@ pub async fn build_state(
     // decisions emit to Stat (§4.2f). The engine is stored in AppState so
     // handlers gate via `policy::require` (step 5 is the ONLY gate).
     // ── Sentin8:Policy (Shield, shell-owned boot): consume the
-    // engine the shell booted in step 8 — no second engine, consumer, or
+    // engine the shell booted in step 8 - no second engine, consumer, or
     // DCR registration here.
     let policy_engine = core.admin.policy.clone();
 
@@ -144,7 +144,7 @@ pub async fn build_state(
         },
     };
 
-    // Event-driven consumer — subscribes to the PMS stream family.
+    // Event-driven consumer - subscribes to the PMS stream family.
     crate::event_consumer::spawn(core.pool.clone(), state.bus_client.clone());
 
     Ok(state)
@@ -153,7 +153,7 @@ pub async fn build_state(
 /// Add this service's routes onto the shell-provided router. The shell
 /// owns the boot sequence, state binding, OpenAPI merge and the standard
 /// middleware stack; this adds ONLY routes (including the service's own
-/// `/v1/health` — custom payload).
+/// `/v1/health` - custom payload).
 pub fn routes(
     router: axum::Router<crate::handlers::AppState>,
 ) -> axum::Router<crate::handlers::AppState> {
@@ -287,7 +287,7 @@ pub fn routes(
         )
 }
 
-/// Shared policy-admin surface accessor — the shared
+/// Shared policy-admin surface accessor - the shared
 /// handlers extract this service's admin state via `HasPolicyAdmin`.
 impl sentin8::shield::admin::HasPolicyAdmin for crate::handlers::AppState {
     fn policy_admin(&self) -> &sentin8::shield::admin::SharedAdminState {

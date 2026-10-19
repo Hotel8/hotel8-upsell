@@ -3,10 +3,10 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Hotel8:Upsell
 // SPDX-License-Identifier: Apache-2.0
 
-//! Pure upsell offer-transaction state machine — DB-free.
+//! Pure upsell offer-transaction state machine - DB-free.
 //!
 //! `TransactionState` over the transaction `status` TEXT values
-//! (OFFERED/ACCEPTED/DECLINED/EXPIRED — see `services/upsell/sql/init.sql`).
+//! (OFFERED/ACCEPTED/DECLINED/EXPIRED - see `services/upsell/sql/init.sql`).
 //! The SQL guards (`AND status = 'OFFERED'`) mirror `can_transition_to`.
 
 /// Upsell transaction states (TEXT literals in `upsell_upsell_transactions.status`).

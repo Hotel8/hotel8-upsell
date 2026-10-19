@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Hotel8:Upsell
 // SPDX-License-Identifier: Apache-2.0
 
-//! Upsell HTTP handlers — offers and eligibility.
+//! Upsell HTTP handlers - offers and eligibility.
 use crate::config::UpsellConfig;
 use crate::event_emit::{emit_on_pool, emit_tx, Publisher};
 use axum::extract::{Path, Query, State};
@@ -18,13 +18,13 @@ pub struct AppState {
     pub config: Arc<UpsellConfig>,
     pub pool: sqlx::PgPool,
     pub bus_client: sentin8::bus::client::BusClient,
-    /// Cross-service PMS client (B1) — replaces direct pms_* SQL.
+    /// Cross-service PMS client (B1) - replaces direct pms_* SQL.
     pub pms_client: hotel8::pms::client::H8pmsClient,
-    /// Shield policy engine: step 5 is the ONLY gate —
-    /// handlers verify the token (steps 1–4) then evaluate a
+    /// Shield policy engine: step 5 is the ONLY gate -
+    /// handlers verify the token (steps 1-4) then evaluate a
     /// `hotel8:upsell:<resource>:<action>` target; no JWT scope check remains.
     pub policy: Arc<crate::policy::Engine>,
-    /// Shared Sentin8:Policy admin surface — same engine
+    /// Shared Sentin8:Policy admin surface - same engine
     /// instance the request path evaluates.
     pub admin: sentin8::shield::admin::SharedAdminState,
 }
@@ -52,7 +52,7 @@ fn err_db(e: sqlx::Error) -> (StatusCode, String) {
 }
 
 /// Map an outbox-emission failure to a 500 (DBX: a silently lost
-/// event is a contract violation — same 500 contract as `err_db`).
+/// event is a contract violation - same 500 contract as `err_db`).
 fn err_emit(e: sentin8::bus::outbox::OutboxError) -> (StatusCode, String) {
     (StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
 }
@@ -599,7 +599,7 @@ pub async fn accept_offer(
         .get("price_charged")
         .and_then(|v| v.as_str())
         .unwrap_or("0");
-    // D2: the transition guard lives in `offer_state` — the SQL `AND status =
+    // D2: the transition guard lives in `offer_state` - the SQL `AND status =
     // 'OFFERED'` guard mirrors `can_transition_to`.
     let _state_ok = crate::offer_state::TransactionState::Offered
         .can_transition_to(crate::offer_state::TransactionState::Accepted);
@@ -771,7 +771,7 @@ pub async fn get_analytics(
     let total: i64 = row.get("total");
     let accepted: i64 = row.get("accepted");
     // D2: the acceptance-rate math (decided = accepted + declined) lives in
-    // `offer_state::acceptance_rate_pct` — testable, DB-free.
+    // `offer_state::acceptance_rate_pct` - testable, DB-free.
     let acceptance_rate = crate::offer_state::acceptance_rate_pct(
         accepted as usize,
         row.get::<i64, _>("declined") as usize,
@@ -820,7 +820,7 @@ pub async fn expire_offers(
         .and_then(|v| v.as_str())
         .and_then(|s| uuid::Uuid::parse_str(s).ok());
     // D2: 24h lapse rule mirrored in `offer_state::is_expired` (tested).
-    // D2: rule = `is_expired(OFFERED, age >= 24h)` from `offer_state` — the
+    // D2: rule = `is_expired(OFFERED, age >= 24h)` from `offer_state` - the
     // SQL implements the same predicate in the WHERE clause.
     debug_assert!(crate::offer_state::is_expired(
         crate::offer_state::TransactionState::Offered,
@@ -1002,7 +1002,7 @@ pub async fn cron_daily_generation(
             "property_id required for daily generation".to_string(),
         ));
     };
-    // The PMS search API filters by status/limit only — apply the arrival
+    // The PMS search API filters by status/limit only - apply the arrival
     // window (next 7 days, CONFIRMED/CHECKED_IN) client-side.
     let in_window = |r: &serde_json::Value| -> bool {
         let status_ok = matches!(
@@ -1069,7 +1069,7 @@ pub async fn cron_daily_generation(
     ))
 }
 
-// ── PMS integration — fetch upcoming reservations, real-time inventory, guest profiles ──
+// ── PMS integration - fetch upcoming reservations, real-time inventory, guest profiles ──
 #[utoipa::path(
     get,
     path = "/v1/integration/pms",
@@ -1172,7 +1172,7 @@ pub async fn fetch_hotel8_pms_data(
     } else {
         None
     };
-    // Client responses are already JSON — pass through the PMS projection.
+    // Client responses are already JSON - pass through the PMS projection.
     conn.commit().await.map_err(err_db)?;
     Ok(Json(serde_json::json!({
         "reservation": res_data,
@@ -1181,7 +1181,7 @@ pub async fn fetch_hotel8_pms_data(
     })))
 }
 
-// ── Func integration — execute ML pricing model (WASM) for dynamic offers ──
+// ── Func integration - execute ML pricing model (WASM) for dynamic offers ──
 #[utoipa::path(
     post,
     path = "/v1/integration/func/dynamic-price",
@@ -1230,7 +1230,7 @@ pub async fn compute_dynamic_price(
     let local =
         crate::pricing::compute(base_price, occupancy_rate, days_before_arrival, guest_tier);
     // The certificate-presenting Func client (`None` at boot when the
-    // workload certificate is not yet mintable — the local rule covers).
+    // workload certificate is not yet mintable - the local rule covers).
     let func_price = match state.config.func_client.as_ref() {
         Some(client) => {
             crate::func_exec::run_pricing_module(
@@ -1250,7 +1250,7 @@ pub async fn compute_dynamic_price(
         Ok(Some(price)) => price,
         Ok(None) => local,
         Err(e) => {
-            tracing::warn!(error = %e, "upsell: Func pricing module failed — falling back to local rule");
+            tracing::warn!(error = %e, "upsell: Func pricing module failed - falling back to local rule");
             local
         }
     };
@@ -1262,7 +1262,7 @@ pub async fn compute_dynamic_price(
     })))
 }
 
-// ── Post integration — send offer notification to guest ──
+// ── Post integration - send offer notification to guest ──
 #[utoipa::path(
     post,
     path = "/v1/integration/post/notify",
@@ -1305,7 +1305,7 @@ pub async fn send_offer_notification(
     ))
 }
 
-// ── Payments integration — process upgrade payment ──
+// ── Payments integration - process upgrade payment ──
 #[utoipa::path(
     post,
     path = "/v1/integration/payments/payment",
@@ -1356,7 +1356,7 @@ pub async fn process_upgrade_payment(
         .get("currency_code")
         .and_then(|v| v.as_str())
         .unwrap_or("USD");
-    // B3: the upgrade payment is a Bill8:Payments charge — never
+    // B3: the upgrade payment is a Bill8:Payments charge - never
     // shadow-written here. A fabricated id is history. CERTFREE-4V: the
     // boot-built `upsell-payments` certificate transport carries the call.
     let Some(ref payments_http) = state.config.payments_http else {
@@ -1388,7 +1388,7 @@ pub async fn process_upgrade_payment(
     })))
 }
 
-// ── PMS integration — modify reservation on acceptance ──
+// ── PMS integration - modify reservation on acceptance ──
 #[utoipa::path(
     post,
     path = "/v1/integration/pms/modify-reservation",
@@ -1437,7 +1437,7 @@ pub async fn modify_reservation_on_acceptance(
         .bind(transaction_id).fetch_one(&mut *conn).await.map_err(err_db)?;
     let reservation_id: Option<uuid::Uuid> = tx.get("reservation_id");
     let tx_property_id: Option<uuid::Uuid> = tx.get("property_id");
-    // B1: the reservation modification goes through the PMS HTTP API —
+    // B1: the reservation modification goes through the PMS HTTP API -
     // no cross-service `UPDATE pms_reservations` SQL.
     if let (Some(res_id), Some(pid)) = (reservation_id, tx_property_id) {
         state
@@ -1465,7 +1465,7 @@ pub async fn modify_reservation_on_acceptance(
     ))
 }
 
-// ── Post integration — send acceptance confirmation ──
+// ── Post integration - send acceptance confirmation ──
 #[utoipa::path(
     post,
     path = "/v1/integration/post/confirmation",

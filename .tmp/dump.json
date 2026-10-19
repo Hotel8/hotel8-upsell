@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "hotel8-upsell",
-    "description": "Sentin8 Hotel8:Upsell — Upsell Engine service.",
+    "description": "Sentin8 Hotel8:Upsell - Upsell Engine service.",
     "license": {
       "name": "MIT OR Apache-2.0",
       "identifier": "MIT OR Apache-2.0"
@@ -726,7 +726,7 @@
   "tags": [
     {
       "name": "upsell",
-      "description": "Hotel8:Upsell admin API — offers"
+      "description": "Hotel8:Upsell admin API - offers"
     }
   ]
 }

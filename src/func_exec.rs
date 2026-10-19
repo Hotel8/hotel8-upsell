@@ -6,7 +6,7 @@
 //! Sentin8:Func execution helpers.
 //!
 //! `run_pricing_module` executes the tenant-deployed `upsell-pricing` WASM
-//! module (hook `on_quote`) through the platform Func service — over the
+//! module (hook `on_quote`) through the platform Func service - over the
 //! certificate-presenting client the boot built from the `upsell` workload
 //! identity (CERTFREE-4F; Func's cert-first gate resolves it against the
 //! registry map). When no module is deployed (404) or Func is unreachable,
@@ -32,7 +32,7 @@ pub async fn run_pricing_module(
             Ok(price)
         }
         Err(sentin8_func_sdk::client::FuncError::Http(ref m)) if m.contains("404") => {
-            Ok(None) // module not deployed — caller falls back to the local rule
+            Ok(None) // module not deployed - caller falls back to the local rule
         }
         Err(e) => Err(format!("Func execute failed: {e}")),
     }

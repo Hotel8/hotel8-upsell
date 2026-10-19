@@ -7,7 +7,7 @@
 use sentin8::auth::client::{Client as AuthClient, ClientOptions};
 use std::env;
 
-/// Manual `Debug` — `FuncClient` (and the Auth client) carry transport
+/// Manual `Debug` - `FuncClient` (and the Auth client) carry transport
 /// internals that must never log.
 #[derive(Clone)]
 pub struct UpsellConfig {
@@ -18,7 +18,7 @@ pub struct UpsellConfig {
     pub sentin8_bus_url: String,
     pub pms_url: String,
     pub func_url: String,
-    /// Certificate-presenting Func client (CERTFREE-4F — the `upsell`
+    /// Certificate-presenting Func client (CERTFREE-4F - the `upsell`
     /// workload certificate presents in the TLS handshake; no bearer
     /// token exists on the path). Built at boot; `None` when the
     /// certificate is not yet mintable (the caller degrades to the
@@ -27,7 +27,7 @@ pub struct UpsellConfig {
     pub bill8_payments_url: String,
     pub sentin8_auth_client: AuthClient,
     /// Certificate-presenting transport for the `upsell-payments` workload
-    /// (accepted-upsell charges + token consume — CERTFREE-4V, no M2M
+    /// (accepted-upsell charges + token consume - CERTFREE-4V, no M2M
     /// token exists).
     pub payments_http: Option<reqwest::Client>,
 }
@@ -40,7 +40,7 @@ impl UpsellConfig {
                 .expect("HOTEL8_UPSELL_PORT must be set by captain")
                 .parse()
                 .expect("HOTEL8_UPSELL_PORT must be a number"),
-            // DBX (§VDC.3) — required DSN, vertical database (hotel8), no
+            // DBX (§VDC.3) - required DSN, vertical database (hotel8), no
             // platform-database fallback.
             database_url: env::var("HOTEL8_UPSELL_DATABASE_URL").unwrap_or_else(|_| {
                 "postgres://hotel8_upsell_service@localhost:5432/hotel8".into()

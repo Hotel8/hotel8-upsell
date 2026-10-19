@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Hotel8:Upsell
 // SPDX-License-Identifier: Apache-2.0
 
-//! Sentin8:Bus consumer — reacts to PMS checkout events.
+//! Sentin8:Bus consumer - reacts to PMS checkout events.
 //!
 //! Reaction is **event-driven**: Hotel8:PMS emits
 //! `hotel8:pms:reservation:checked_out` (stream family `pms`) when a guest
@@ -11,7 +11,7 @@
 //! the checkout payload and offer generation on PMS reservation creation.
 //!
 //! Uses the platform SSE consumer pattern (bus-client `sse_consume` +
-//! `POST /v1/ack`) — the platform's env-init consumer shape.
+//! `POST /v1/ack`) - the platform's env-init consumer shape.
 //!
 //! Design: `hotel8/design/sentin8-hotel8-upsell-technical-design.md` §7
 //! (A6 event consumers).
@@ -21,7 +21,7 @@ use std::time::Duration;
 use futures_util::StreamExt;
 use sqlx::PgPool;
 
-/// Consumer group — load-balances across upsell replicas; a message is
+/// Consumer group - load-balances across upsell replicas; a message is
 /// handled once per group (at-least-once + idempotent award = effectively-once).
 const CONSUMER_GROUP: &str = "hotel8:upsell:offers";
 
@@ -51,10 +51,10 @@ async fn run(pool: PgPool, bus_client: sentin8::bus::client::BusClient) {
             Ok(resp) => {
                 tracing::info!("upsell: bus SSE connected to stream family 'pms'");
                 sse_loop(&pool, &bus_client, resp).await;
-                tracing::info!("upsell: bus SSE disconnected — reconnecting");
+                tracing::info!("upsell: bus SSE disconnected - reconnecting");
             }
             Err(e) => {
-                tracing::warn!(error = %e, "upsell: bus SSE consume failed — reconnecting");
+                tracing::warn!(error = %e, "upsell: bus SSE consume failed - reconnecting");
             }
         }
         tokio::time::sleep(RECONNECT_DELAY).await;
@@ -122,7 +122,7 @@ async fn handle_message(
         return; // other pms events are not upsell concerns
     }
     // Payload (event-completeness, A1): reservation_id + room_number (+ env_id
-    // in the envelope). Points awarding needs the folio spend — that query
+    // in the envelope). Points awarding needs the folio spend - that query
     // belongs to PMS; the award here uses the stay-nights rule extracted in
     // `points_logic` (pure, DB-free) over the reservation window.
     let reservation_id = msg
@@ -136,11 +136,11 @@ async fn handle_message(
         .and_then(|v| v.as_str())
         .unwrap_or("");
     if reservation_id.is_empty() {
-        tracing::warn!("upsell: checkout event missing reservation_id — skipped");
+        tracing::warn!("upsell: checkout event missing reservation_id - skipped");
         return;
     }
     tracing::info!(reservation_id, env_id = %msg.env_id, "upsell: checkout event received");
-    // Idempotent award: the award INSERT dedupes on (member, reservation) —
+    // Idempotent award: the award INSERT dedupes on (member, reservation) -
     // see `points_logic::award_on_checkout_sql`. Replays are no-ops.
     let _ = pool; // award execution wired in the D-layer story (member lookup by folio)
 }

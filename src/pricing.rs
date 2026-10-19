@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Hotel8:Upsell
 // SPDX-License-Identifier: Apache-2.0
 
-//! Pure dynamic-pricing rule — DB-free, testable.
+//! Pure dynamic-pricing rule - DB-free, testable.
 //!
 //! The local fallback rule mirrors the historical inline math; the
 //! authoritative price comes from a Sentin8:Func WASM module when deployed

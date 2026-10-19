@@ -5,12 +5,12 @@
 
 //! Bill8:Payments execution for accepted upsells.
 //!
-//! The upgrade payment is an **immutable charge** at Bill8:Payments —
+//! The upgrade payment is an **immutable charge** at Bill8:Payments -
 //! hotel8 never shadow-writes ledger balances. The caller supplies the
 //! single-use token; it is consumed in exchange for the payment-method
 //! id, the charge is created with an idempotency key, and the charge id
 //! is returned. Every call presents the `upsell-payments` workload
-//! CERTIFICATE in the TLS handshake (CERTFREE-4V — no M2M token
+//! CERTIFICATE in the TLS handshake (CERTFREE-4V - no M2M token
 //! exists; the transport is built at boot and stored in the config).
 
 /// POST a charge to Bill8:Payments for an accepted upsell.

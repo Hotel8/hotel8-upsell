@@ -3,7 +3,7 @@
 -- SPDX-FileCopyrightText: Copyright Contributors to the Hotel8:Upsell
 -- SPDX-License-Identifier: Apache-2.0
 
--- Hotel8:Upsell — Upsell Engine tables.
+-- Hotel8:Upsell - Upsell Engine tables.
 CREATE SCHEMA IF NOT EXISTS upsell;
 DO $$ BEGIN
     CREATE TYPE upsell.offer_status AS ENUM ('DRAFT', 'ACTIVE', 'PAUSED', 'EXPIRED', 'ARCHIVED');
@@ -70,7 +70,7 @@ CREATE POLICY upsell_er_rls ON upsell.eligibility_rules USING (offer_id IN (SELE
 DROP POLICY IF EXISTS upsell_ut_rls ON upsell.upsell_transactions;
 CREATE POLICY upsell_ut_rls ON upsell.upsell_transactions USING (sentin8_context_initialized() AND env_id = sentin8_current_env_id());
 -- ──────────────────────────────────────────────────────────────────────────
--- Local outbox (DBX, architecture-principles §6.7) — producer path:
+-- Local outbox (DBX, architecture-principles §6.7) - producer path:
 -- rows are appended in the SAME transaction as the domain change; the
 -- shell's post-commit relay pushes them to Bus POST /v1/produce
 -- (M2M sentin8:bus:produce, idempotency_key = row id).
@@ -120,7 +120,7 @@ CREATE TRIGGER outbox_notify_trigger
 -- Local audit journal (architecture-principles §6.8): same-transaction
 -- journal rows; the shell's post-commit pusher ships them to Sys
 -- POST /v1/audit (M2M sentin8:sys:audit:write). A Sys outage only delays
--- delivery — rows persist until pushed.
+-- delivery - rows persist until pushed.
 -- Generated from sentin8_audit::audit_journal_sql("upsell").
 -- ──────────────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS upsell.audit_journal (
@@ -187,7 +187,7 @@ ALTER TABLE upsell.upsell_transactions
     ADD COLUMN IF NOT EXISTS variant_label TEXT,
     ADD COLUMN IF NOT EXISTS modified_reservation JSONB;
 
--- H2.5.2: A/B testing — variant tracking
+-- H2.5.2: A/B testing - variant tracking
 ALTER TABLE upsell.eligibility_rules
     ADD COLUMN IF NOT EXISTS variant_label TEXT,
     ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
