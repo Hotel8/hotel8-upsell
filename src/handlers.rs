@@ -123,16 +123,14 @@ pub async fn create_offer(
     .await
     .map_err(err_emit)?;
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(
-        hotel8::upsell::contracts::OfferCreatedResponse {
-            id,
-            property_id,
-            offer_code,
-            offer_name: row.get("offer_name"),
-            price: row.get("price"),
-            status,
-        },
-    ))
+    Ok(Json(hotel8::upsell::contracts::OfferCreatedResponse {
+        id,
+        property_id,
+        offer_code,
+        offer_name: row.get("offer_name"),
+        price: row.get("price"),
+        status,
+    }))
 }
 
 /// `GET /v1/offers`
@@ -236,16 +234,14 @@ pub async fn update_offer(
     .map_err(err_emit)?;
     let s: String = row.get("status");
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(
-        hotel8::upsell::contracts::OfferUpdatedResponse {
-            id: row.get("id"),
-            offer_code: row.get("offer_code"),
-            offer_name: row.get("offer_name"),
-            price: row.get("price"),
-            category: row.get("category"),
-            status: s,
-        },
-    ))
+    Ok(Json(hotel8::upsell::contracts::OfferUpdatedResponse {
+        id: row.get("id"),
+        offer_code: row.get("offer_code"),
+        offer_name: row.get("offer_name"),
+        price: row.get("price"),
+        category: row.get("category"),
+        status: s,
+    }))
 }
 #[utoipa::path(
     post,
@@ -294,14 +290,12 @@ pub async fn create_rule(
     .await
     .map_err(err_emit)?;
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(
-        hotel8::upsell::contracts::RuleCreatedResponse {
-            id,
-            offer_id,
-            rule_type,
-            rule_value,
-        },
-    ))
+    Ok(Json(hotel8::upsell::contracts::RuleCreatedResponse {
+        id,
+        offer_id,
+        rule_type,
+        rule_value,
+    }))
 }
 #[utoipa::path(
     get,
@@ -472,9 +466,10 @@ pub async fn test_rule(
     emit_tx(&mut *conn, env_id, "hotel8:upsell:rule:tested", serde_json::json!({ "offer_id": offer_id, "reservation_id": reservation_id, "eligible": eligible }),
         &Publisher::from_parts(&a.claims.sub, &a.claims.scope)).await.map_err(err_emit)?;
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(
-        hotel8::upsell::contracts::RuleTestResult { eligible, checks }
-    ))
+    Ok(Json(hotel8::upsell::contracts::RuleTestResult {
+        eligible,
+        checks,
+    }))
 }
 
 // ── -Offer generation + Get offers for reservation ──
@@ -530,7 +525,9 @@ pub async fn generate_offers(
     emit_tx(&mut *conn, env_id, "hotel8:upsell:offers:generated", serde_json::json!({ "property_id": property_id, "reservation_id": reservation_id, "count": generated.len() }),
         &Publisher::from_parts(&a.claims.sub, &a.claims.scope)).await.map_err(err_emit)?;
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(hotel8::upsell::contracts::GenerateOffersResult { generated }))
+    Ok(Json(hotel8::upsell::contracts::GenerateOffersResult {
+        generated,
+    }))
 }
 #[utoipa::path(
     get,
@@ -579,7 +576,9 @@ pub async fn get_offers_for_reservation(
         })
         .collect();
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(hotel8::upsell::contracts::OffersForReservationResponse { items }))
+    Ok(Json(
+        hotel8::upsell::contracts::OffersForReservationResponse { items },
+    ))
 }
 
 // ── -Accept, decline, status ──
@@ -634,13 +633,11 @@ pub async fn accept_offer(
     let s: String = row.get("status");
     let state = crate::offer_state::TransactionState::from_label(&s);
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(
-        hotel8::upsell::contracts::OfferAcceptedResponse {
-            transaction_id: row.get("id"),
-            status: state.label().into(),
-            accepted: true,
-        },
-    ))
+    Ok(Json(hotel8::upsell::contracts::OfferAcceptedResponse {
+        transaction_id: row.get("id"),
+        status: state.label().into(),
+        accepted: true,
+    }))
 }
 #[utoipa::path(
     post,
@@ -687,13 +684,11 @@ pub async fn decline_offer(
     .await
     .map_err(err_emit)?;
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(
-        hotel8::upsell::contracts::OfferDeclinedResponse {
-            transaction_id,
-            status: "DECLINED".into(),
-            declined: true,
-        },
-    ))
+    Ok(Json(hotel8::upsell::contracts::OfferDeclinedResponse {
+        transaction_id,
+        status: "DECLINED".into(),
+        declined: true,
+    }))
 }
 
 /// `GET /v1/offers/status`
@@ -731,15 +726,13 @@ pub async fn get_offer_status(
     let row = sqlx::query("SELECT id, status, accepted_at, declined_at, price_charged::text as price_charged FROM upsell.upsell_transactions WHERE id = $1").bind(transaction_id).fetch_one(&mut *conn).await.map_err(err_db)?;
     let s: String = row.get("status");
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(
-        hotel8::upsell::contracts::OfferStatusResponse {
-            transaction_id: row.get("id"),
-            status: s,
-            accepted_at: row.get("accepted_at"),
-            declined_at: row.get("declined_at"),
-            price_charged: row.get("price_charged"),
-        },
-    ))
+    Ok(Json(hotel8::upsell::contracts::OfferStatusResponse {
+        transaction_id: row.get("id"),
+        status: s,
+        accepted_at: row.get("accepted_at"),
+        declined_at: row.get("declined_at"),
+        price_charged: row.get("price_charged"),
+    }))
 }
 
 // ── Analytics ──
@@ -777,12 +770,8 @@ pub async fn get_analytics(
     let mut conn = state.pool.begin().await.map_err(err_db)?;
     set_tenant_context(&mut conn, env_id).await;
     let property_id = params.property_id;
-    let start = params
-        .start_date
-        .unwrap_or_else(|| "2020-01-01".into());
-    let end = params
-        .end_date
-        .unwrap_or_else(|| "2030-12-31".into());
+    let start = params.start_date.unwrap_or_else(|| "2020-01-01".into());
+    let end = params.end_date.unwrap_or_else(|| "2030-12-31".into());
     let row = sqlx::query("SELECT COUNT(*) as total, COUNT(*) FILTER (WHERE status = 'ACCEPTED') as accepted, COUNT(*) FILTER (WHERE status = 'DECLINED') as declined, COUNT(*) FILTER (WHERE status = 'EXPIRED') as expired, COALESCE(SUM(price_charged) FILTER (WHERE status = 'ACCEPTED'), 0)::text as revenue_uplift FROM upsell.upsell_transactions WHERE ($1::uuid IS NULL OR property_id = $1) AND created_at >= $2::date AND created_at < $3::date")
         .bind(property_id).bind(start).bind(end)
         .fetch_one(&mut *conn).await.map_err(err_db)?;
@@ -891,14 +880,38 @@ pub async fn list_eligibility_types(
     use hotel8::upsell::contracts::{EligibilityType, EligibilityTypesResponse};
     Ok(Json(EligibilityTypesResponse {
         types: vec![
-            EligibilityType { code: "GUEST_TIER".into(), description: "Guest VIP tier (NONE, SILVER, GOLD, PLATINUM, DIAMOND)".into() },
-            EligibilityType { code: "DAYS_BEFORE_ARRIVAL".into(), description: "Number of days before arrival (e.g. 1-7 days)".into() },
-            EligibilityType { code: "ORIGINAL_ROOM_TYPE".into(), description: "Original booked room type code".into() },
-            EligibilityType { code: "MIN_STAY".into(), description: "Minimum length of stay in nights".into() },
-            EligibilityType { code: "BOOKING_CHANNEL".into(), description: "Booking channel (DIRECT, OTA, GROUP, etc.)".into() },
-            EligibilityType { code: "MARKET_CODE".into(), description: "Market segment code".into() },
-            EligibilityType { code: "LOYALTY_MEMBER".into(), description: "Whether guest is a loyalty member".into() },
-            EligibilityType { code: "PREVIOUS_STAYS".into(), description: "Minimum number of previous stays".into() },
+            EligibilityType {
+                code: "GUEST_TIER".into(),
+                description: "Guest VIP tier (NONE, SILVER, GOLD, PLATINUM, DIAMOND)".into(),
+            },
+            EligibilityType {
+                code: "DAYS_BEFORE_ARRIVAL".into(),
+                description: "Number of days before arrival (e.g. 1-7 days)".into(),
+            },
+            EligibilityType {
+                code: "ORIGINAL_ROOM_TYPE".into(),
+                description: "Original booked room type code".into(),
+            },
+            EligibilityType {
+                code: "MIN_STAY".into(),
+                description: "Minimum length of stay in nights".into(),
+            },
+            EligibilityType {
+                code: "BOOKING_CHANNEL".into(),
+                description: "Booking channel (DIRECT, OTA, GROUP, etc.)".into(),
+            },
+            EligibilityType {
+                code: "MARKET_CODE".into(),
+                description: "Market segment code".into(),
+            },
+            EligibilityType {
+                code: "LOYALTY_MEMBER".into(),
+                description: "Whether guest is a loyalty member".into(),
+            },
+            EligibilityType {
+                code: "PREVIOUS_STAYS".into(),
+                description: "Minimum number of previous stays".into(),
+            },
         ],
     }))
 }
@@ -1313,13 +1326,11 @@ pub async fn send_offer_notification(
     // In production: POST to Post via state.config.sentin8_post_url
     emit_on_pool(&state.pool, env_id, "hotel8:upsell:notification:sent", serde_json::json!({ "transaction_id": transaction_id, "channel": channel, "status": "queued" }),
         &Publisher::from_parts(&a.claims.sub, &a.claims.scope)).await.map_err(err_emit)?;
-    Ok(Json(
-        hotel8::upsell::contracts::NotificationQueued {
-            transaction_id,
-            channel,
-            status: "queued".into(),
-        },
-    ))
+    Ok(Json(hotel8::upsell::contracts::NotificationQueued {
+        transaction_id,
+        channel,
+        status: "queued".into(),
+    }))
 }
 
 // ── Payments integration - process upgrade payment ──
@@ -1454,13 +1465,11 @@ pub async fn modify_reservation_on_acceptance(
     emit_tx(&mut *conn, env_id, "hotel8:upsell:reservation:modified", serde_json::json!({ "transaction_id": transaction_id, "reservation_id": reservation_id, "new_room_type_id": new_room_type_id, "new_rate": new_rate }),
         &Publisher::from_parts(&a.claims.sub, &a.claims.scope)).await.map_err(err_emit)?;
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(
-        hotel8::upsell::contracts::ModifyReservationResult {
-            transaction_id,
-            reservation_id,
-            modified: true,
-        },
-    ))
+    Ok(Json(hotel8::upsell::contracts::ModifyReservationResult {
+        transaction_id,
+        reservation_id,
+        modified: true,
+    }))
 }
 
 // ── Post integration - send acceptance confirmation ──
@@ -1502,12 +1511,10 @@ pub async fn send_acceptance_confirmation(
     )
     .await
     .map_err(err_emit)?;
-    Ok(Json(
-        hotel8::upsell::contracts::ConfirmationQueued {
-            transaction_id,
-            status: "queued".into(),
-        },
-    ))
+    Ok(Json(hotel8::upsell::contracts::ConfirmationQueued {
+        transaction_id,
+        status: "queued".into(),
+    }))
 }
 
 // ── A/B testing support ──
@@ -1575,12 +1582,10 @@ pub async fn create_ab_test(
     .await
     .map_err(err_emit)?;
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(
-        hotel8::upsell::contracts::CreateAbTestResult {
-            offer_id,
-            variants: created,
-        },
-    ))
+    Ok(Json(hotel8::upsell::contracts::CreateAbTestResult {
+        offer_id,
+        variants: created,
+    }))
 }
 #[utoipa::path(
     get,
@@ -1646,7 +1651,9 @@ pub async fn get_ab_test_results(
         })
         .collect();
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(hotel8::upsell::contracts::AbTestResultsResponse { variants: items }))
+    Ok(Json(hotel8::upsell::contracts::AbTestResultsResponse {
+        variants: items,
+    }))
 }
 
 // ── Rate limiting on offer generation ──

@@ -159,4 +159,5 @@ use utoipa::OpenApi;
         (name = "policy", description = "Shield policy administration (shared surface)"),
         (name = "upsell", description = "Hotel8:Upsell admin API - offers"),
     ),
-)]pub struct UpsellOpenApi;
+)]
+pub struct UpsellOpenApi;
