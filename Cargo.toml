@@ -48,5 +48,5 @@ anyhow = "1"
 rust_decimal = { version = "1", features = ["serde-with-str", "db-postgres"] }
 futures-util = "0.3"
 utoipa = { version = "5", features = ["chrono", "uuid"] }
-sentin8-func-sdk = { git = "https://github.com/Sentin8/sentin8-func", tag = "func-sdk-v0.6.5" }
+sentin8-func-sdk = { git = "https://github.com/Sentin8/sentin8-func", tag = "func-sdk-v0.6.6" }
 
