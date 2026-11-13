@@ -1960,8 +1960,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "hotel8-distrib-client",
  "hotel8-distrib-contracts",
@@ -1979,8 +1979,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-distrib-client"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "hotel8-distrib-contracts",
  "reqwest 0.12.28",
@@ -1994,8 +1994,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-distrib-contracts"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "chrono",
  "rust_decimal",
@@ -2007,8 +2007,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-loyalty-client"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "hotel8-loyalty-contracts",
  "reqwest 0.12.28",
@@ -2022,8 +2022,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-loyalty-contracts"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "chrono",
  "rust_decimal",
@@ -2035,8 +2035,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-meta-client"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "hotel8-meta-contracts",
  "reqwest 0.12.28",
@@ -2050,8 +2050,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-meta-contracts"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "chrono",
  "rust_decimal",
@@ -2063,8 +2063,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-pms-client"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "hotel8-pms-contracts",
  "reqwest 0.12.28",
@@ -2078,8 +2078,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-pms-contracts"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "chrono",
  "rust_decimal",
@@ -2091,8 +2091,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-pos-client"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "hotel8-pos-contracts",
  "reqwest 0.12.28",
@@ -2106,8 +2106,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-pos-contracts"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "chrono",
  "rust_decimal",
@@ -2149,8 +2149,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-upsell-client"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "hotel8-upsell-contracts",
  "reqwest 0.12.28",
@@ -2164,8 +2164,8 @@ dependencies = [
 
 [[package]]
 name = "hotel8-upsell-contracts"
-version = "0.1.0"
-source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v0.5.8#1fbad9891b54df6f07cc5c1b984a460653df4702"
+version = "1.0.0"
+source = "git+https://github.com/Hotel8/hotel8-sdk?tag=hotel8-v1.0.0#4bfd57969de97275f0e2013c92634fccdee18e34"
 dependencies = [
  "chrono",
  "rust_decimal",
