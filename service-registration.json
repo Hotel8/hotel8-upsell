@@ -6,7 +6,8 @@
       "telemetry_property": {
         "slug": "upsell",
         "name": "Hotel8:Upsell Telemetry"
-      }
+      },
+      "exposure": "internal"
     }
   ]
 }
